@@ -167,23 +167,13 @@ def ingest_csv_data(filename: str):
     Keyword arguments:
     filename: the name of the CSV file that you want to ingest into the database.
     """
-    # Step 1: Connect to the SQLite database
+
     db_connection = sqlite3.connect('./db/utsc-exercise.db')
-    
-    # Step 2: Load the CSV file into a pandas DataFrame
+
     try:
         df = pd.read_csv(filename)
-        
-        # OPTIONAL: Data cleaning (example - remove rows with missing values)
-        # You can also perform other cleaning steps here, depending on your data
-        cleaned_df = df.dropna()  # Removing rows with any missing values, if applicable
-        
-        # Alternatively, you can replace missing values instead of dropping rows:
-        # cleaned_df = df.fillna(method='ffill')
-        
-        # Step 3: Insert the cleaned data into the database
-        # Assume the table name is 'EMPLOYEE' (change it as per your CSV structure)
-        cleaned_df.to_sql('EMPLOYEE', db_connection, if_exists='append', index=False)
+        cleaned_df = df.dropna()  
+        cleaned_df.to_sql('Employee', db_connection, if_exists='append', index=False)
         
         # Commit the transaction
         db_connection.commit()
@@ -192,40 +182,22 @@ def ingest_csv_data(filename: str):
     except Exception as e:
         print(f"Error processing the file {filename}: {e}")
     finally:
-        # Step 4: Move the file to the 'hist' folder after processing
+      
         hist_folder = './hist'
         
-        # Ensure 'hist' folder exists
+     
         if not os.path.exists(hist_folder):
             os.makedirs(hist_folder)
         
         try:
-            # Move the CSV file to the 'hist' folder
+           
             shutil.move(filename, os.path.join(hist_folder, filename))
             print(f"File {filename} moved to the 'hist' folder.")
         except Exception as e:
             print(f"Error moving the file to 'hist': {e}")
         
-        # Close the database connection
+ 
         db_connection.close()
-
-    #1 Connect to the database file "utsc-excercise" using one of the helper functions above
-    #  and save the return value into a variable called db_connection.
-
-    #2 Use pandas to load the CSV 'filename' into a dataframe which we'll call 'df'. If you are doing
-    # any cleaning of the dataframe after loading it, make a new variable called 'cleaned_df' and store the cleaned
-    # dataframe there.
-
-    #3 Now that you have the CSV data loaded into a dataframe, you need to insert the data into the SQL database.
-    # Using the dataframe that you created above, as well as the database connection that you have instantiated,
-    # use one of the helper functions above to insert the data into the database.
-
-    #4 Now to show that you've finished processing the CSV file, move the file over to the hist folder 
-    # Hint: use shutil.move and read the parameters it takes)
-    # Hint: I personally use f-strings to use variables in the middle of strings, so in the destination path to move the file, I'd use f"hist/{filename}"
-    # If you want the formal definition of what an f-string does: https://www.geeksforgeeks.org/formatted-string-literals-f-strings-python/
-    
-    pass # <- REMOVE THIS WHEN YOU IMPLEMENT YOUR FUNCTION
 
 def print_employee_dataframe():
     """Connects to the database, puts the Employee table into a dataframe, and then prints the dataframe.
@@ -238,5 +210,5 @@ def print_employee_dataframe():
 
 if __name__ == '__main__':
     #TODO: UNCOMMENT THIS TO INGEST THE DATA ONCE YOU HAVE COMPLETED THE FUNCTION ABOVE
-    # ingest_csv_data("legacy_employees.csv")
+    ingest_csv_data("legacy_employees.csv")
     print_employee_dataframe()
