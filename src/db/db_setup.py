@@ -167,6 +167,47 @@ def ingest_csv_data(filename: str):
     Keyword arguments:
     filename: the name of the CSV file that you want to ingest into the database.
     """
+    # Step 1: Connect to the SQLite database
+    db_connection = sqlite3.connect('./db/utsc-exercise.db')
+    
+    # Step 2: Load the CSV file into a pandas DataFrame
+    try:
+        df = pd.read_csv(filename)
+        
+        # OPTIONAL: Data cleaning (example - remove rows with missing values)
+        # You can also perform other cleaning steps here, depending on your data
+        cleaned_df = df.dropna()  # Removing rows with any missing values, if applicable
+        
+        # Alternatively, you can replace missing values instead of dropping rows:
+        # cleaned_df = df.fillna(method='ffill')
+        
+        # Step 3: Insert the cleaned data into the database
+        # Assume the table name is 'EMPLOYEE' (change it as per your CSV structure)
+        cleaned_df.to_sql('EMPLOYEE', db_connection, if_exists='append', index=False)
+        
+        # Commit the transaction
+        db_connection.commit()
+        print(f"Data from {filename} ingested into the database successfully.")
+        
+    except Exception as e:
+        print(f"Error processing the file {filename}: {e}")
+    finally:
+        # Step 4: Move the file to the 'hist' folder after processing
+        hist_folder = './hist'
+        
+        # Ensure 'hist' folder exists
+        if not os.path.exists(hist_folder):
+            os.makedirs(hist_folder)
+        
+        try:
+            # Move the CSV file to the 'hist' folder
+            shutil.move(filename, os.path.join(hist_folder, filename))
+            print(f"File {filename} moved to the 'hist' folder.")
+        except Exception as e:
+            print(f"Error moving the file to 'hist': {e}")
+        
+        # Close the database connection
+        db_connection.close()
 
     #1 Connect to the database file "utsc-excercise" using one of the helper functions above
     #  and save the return value into a variable called db_connection.
