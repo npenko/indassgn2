@@ -5,6 +5,7 @@ import requests
 import random
 import pandas as pd
 import shutil
+import os 
 
 
 """
@@ -168,10 +169,11 @@ def ingest_csv_data(filename: str):
     filename: the name of the CSV file that you want to ingest into the database.
     """
 
-    db_connection = sqlite3.connect('./db/utsc-exercise.db')
+    db_connection = sqlite3.connect('utsc-exercise.db')
 
     try:
-        df = pd.read_csv(filename)
+        df = pd.read_csv(filename, index_col=0)
+        print(df.columns)
         cleaned_df = df.dropna()  
         cleaned_df.to_sql('Employee', db_connection, if_exists='append', index=False)
         
@@ -210,5 +212,5 @@ def print_employee_dataframe():
 
 if __name__ == '__main__':
     #TODO: UNCOMMENT THIS TO INGEST THE DATA ONCE YOU HAVE COMPLETED THE FUNCTION ABOVE
-    ingest_csv_data("legacy_employees.csv")
+    ingest_csv_data("./hist/legacy_employees.csv")
     print_employee_dataframe()
