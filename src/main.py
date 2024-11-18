@@ -36,7 +36,7 @@ def get_avg_salary_by_job_title(employee_salary_df: pd.DataFrame, selected_title
     
     #Plot the graph
     st.subheader("Average Salary by Job Title")
-    st.bar_chart(avg_salary_by_job_title, x = 'Job', y = 'YearlyCompensation')
+    st.bar_chart(avg_salary_by_job_title, x = 'JobTitle', y = 'YearlyCompensation')
 
 
 #TODO: MAKE THIS USING THE MODEL FUNCTION ABOVE (Copy pasting is your friend here)
@@ -45,30 +45,36 @@ def get_avg_salary_by_country(employee_salary_df: pd.DataFrame, selected_countri
    
     filtered_df = employee_salary_df[employee_salary_df['Country'].isin(selected_countries)]
 
-    # Group by JobTitle and calculate the average salary
     avg_salary_by_country = filtered_df.groupby('Country')['YearlyCompensation'].mean().reset_index()
     
     #Plot the graph
     st.subheader("Average Salary by Country")
-    st.bar_chart(avg_salary_by_job_title, x = 'Country', y = 'YearlyCompensation')
+    st.bar_chart(avg_salary_by_country, x = 'Country', y = 'YearlyCompensation')
 
 
 #TODO: MAKE THIS USING THE MODEL FUNCTION ABOVE (Copy pasting is your friend here)
-def get_num_employees_by_country(employee_salary_df: pd.DataFrame, selected_countries: list):
-   #FIX THIS 
-    filtered_df = employee_salary_df[employee_salary_df['Country'].isin(selected_countries)]
+def get_employee_count_per_country(distinct_employee_count: pd.DataFrame, selected_countries: list):
 
-    # Group by JobTitle and calculate the average salary
-    avg_salary_by_country = filtered_df.groupby('Country')['distinct_employee_count'].mean().reset_index()
+    filtered_df = distinct_employee_count[distinct_employee_count['Country'].isin(selected_countries)]
+
+    employee_count_per_country = filtered_df.groupby("Country")["EmployeeId"].nunique().reset_index()
     
     #Plot the graph
-    st.subheader("Average Salary by Country")
-    st.bar_chart(avg_salary_by_job_title, x = 'Country', y = 'Employee count')
+    st.subheader("Number of Employees by Country")
+    st.bar_chart(employee_count_per_country, x = 'Country', y = 'EmployeeId')
 
 
 #TODO: MAKE THIS USING THE MODEL FUNCTION ABOVE (Copy pasting is your friend here)
-def get_num_employees_by_job_title(employee_salary_df: pd.DataFrame, selected_titles: list):
-    pass
+def get_num_employees_by_job_title(distinct_employee_count: pd.DataFrame, selected_titles: list):
+
+    filtered_df = distinct_employee_count[distinct_employee_count['JobTitle'].isin(selected_titles)]
+
+    num_employees_by_job_title= filtered_df.groupby("JobTitle")["EmployeeId"].nunique().reset_index()
+    
+    #Plot the graph
+    st.subheader("Number of Employees by Job Title")
+    st.bar_chart(num_employees_by_job_title, x = 'JobTitle', y = 'EmployeeId')
+
 
 if __name__ == '__main__':
     # Streamlit app title
@@ -98,4 +104,4 @@ if __name__ == '__main__':
     get_avg_salary_by_country(employee_salary_df, selected_countries)
 
     #Number of employees by country graph
-    get_num_employees_by_country(employee_salary_df, selected_countries)
+    get_employee_count_per_country(employee_salary_df, selected_countries)
